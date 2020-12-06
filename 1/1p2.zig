@@ -236,29 +236,25 @@ pub fn main() std.os.WriteError!void {
     // quite a lot of work to sort a list of integers...
     std.sort.sort(u16, sorted_report.items, {}, S.order);
 
-    var checks: usize = 0;
+    var found: bool = false;
+    var i: usize = 0;
+    while (!found) {
+        const value_a = sorted_report.items[i];
+        for (sorted_report.items) |value_b| {
+            for (sorted_report.items) |value_c| {
+                if (value_a + value_b + value_c == target) {
+                    var answer: u64 = undefined;
+                    var overflowed: bool = @mulWithOverflow(u64, value_a, value_b, &answer);
+                    overflowed = @mulWithOverflow(u64, answer, value_c, &answer);
+                    if (overflowed) {
+                        unreachable;
+                    }
 
-    // iterate from smallest value to largest value
-    for (sorted_report.items) |value_a| {
-        var j: usize = sorted_report.items.len - 1;
-        // iterate from largest value to smallest value
-        // this takes longer on this dataset, just a chance to
-        // try iterating the arraylist in reverse
-        while (j > 0) {
-            const value_b = sorted_report.items[j];
-            if (value_a + value_b == target) {
-                // a u16 * u16 can never exceed a u64 (or a u32). But,
-                // compiler gives integer overflow without this.
-                var answer: u64 = undefined;
-                const overflowed = @mulWithOverflow(u64, value_a, value_b, &answer);
-                if (overflowed) {
-                    unreachable;
+                    std.debug.print("\n{} + {} + {} = {} , * = {}.", .{ value_a, value_b, value_c, target, answer });
+                    return;
                 }
-                std.debug.print("\n{} + {} = {} , * = {}. Found in {} operations.", .{ value_a, value_b, target, answer, checks });
-                return;
             }
-            checks += 1;
-            j -= 1;
         }
+        i += 1;
     }
 }
