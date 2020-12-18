@@ -1,20 +1,5 @@
 const std = @import("std");
 
-// does a slope at particular elevator have a tree at offset x?
-fn tree_exists(traverse_profile: []const u8, x_coord: usize) bool {
-    // slope pattern repeats, every element along 'len'
-    // get the matching index in the base pattern
-    std.debug.print("checking {} ({})i, found? {} (len is {}, value {})\n", .{
-        x_coord,
-        x_coord % traverse_profile.len,
-        traverse_profile[x_coord % traverse_profile.len] == 35,
-        traverse_profile.len,
-        traverse_profile[x_coord % traverse_profile.len],
-    });
-    // 35 decimal = 'X' ascii
-    return traverse_profile[x_coord % traverse_profile.len] == 35;
-}
-
 // Possible instructions for an operation in the handheld unit boot code
 const Instruction = enum {
     nop, acc, jmp
